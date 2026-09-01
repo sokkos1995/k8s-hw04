@@ -4,9 +4,15 @@ metadata:
   name: clusterip-svc
   namespace: task01
 spec:
-  ports:
-  - name: web
-    port: 80
-  selector:
-    app: nginx
   type: ClusterIP
+  selector:
+    app: nginx-multitool
+  ports:
+    - name: http
+      port: 9001
+      targetPort: 80
+      protocol: TCP
+    - name: multitool
+      port: 9002
+      targetPort: 8080
+      protocol: TCP

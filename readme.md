@@ -84,7 +84,33 @@ kubectl create namespace task01
 kubectl apply -f deployment-multi-container.yaml -n task01
 # deployment.apps/nginx created
 
+kubectl apply -f service-clusterip.yaml
+# service/clusterip-svc created
 kubectl apply -f service-nodeport.yaml
+# service/nodeport-svc configured
+
+kubectl describe svc clusterip-svc -n task01
+Name:                     clusterip-svc
+Namespace:                task01
+Labels:                   <none>
+Annotations:              <none>
+Selector:                 app=nginx-multitool
+Type:                     ClusterIP
+IP Family Policy:         SingleStack
+IP Families:              IPv4
+IP:                       10.152.183.242
+IPs:                      10.152.183.242
+Port:                     http  9001/TCP
+TargetPort:               80/TCP
+Endpoints:                10.1.128.225:80,10.1.128.226:80,10.1.128.227:80
+Port:                     multitool  9002/TCP
+TargetPort:               8080/TCP
+Endpoints:                10.1.128.225:8080,10.1.128.226:8080,10.1.128.227:8080
+Session Affinity:         None
+Internal Traffic Policy:  Cluster
+Events:                   <none>
+
+kubectl describe svc nodeport-svc -n task01
 Name:                     nodeport-svc
 Namespace:                task01
 Labels:                   <none>
@@ -95,14 +121,10 @@ IP Family Policy:         SingleStack
 IP Families:              IPv4
 IP:                       10.152.183.146
 IPs:                      10.152.183.146
-Port:                     http  9001/TCP
+Port:                     http  80/TCP
 TargetPort:               80/TCP
 NodePort:                 http  31175/TCP
-Endpoints:                10.1.128.225:80,10.1.128.226:80,10.1.128.227:80
-Port:                     multitool  9002/TCP
-TargetPort:               8080/TCP
-NodePort:                 multitool  30674/TCP
-Endpoints:                10.1.128.225:8080,10.1.128.226:8080,10.1.128.227:8080
+Endpoints:                10.1.128.226:80,10.1.128.225:80,10.1.128.227:80
 Session Affinity:         None
 External Traffic Policy:  Cluster
 Internal Traffic Policy:  Cluster
@@ -113,16 +135,15 @@ kubectl get nodes -o wide
 # microk8s   Ready    <none>   15h   v1.35.6   10.0.1.20     <none>        Ubuntu 24.04.4 LTS   6.8.0-138-generic   containerd://2.1.6
 
 kubectl get svc -n task01
-# NAME           TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)                       AGE
-# nodeport-svc   NodePort   10.152.183.248   <none>        80:30654/TCP,8080:30819/TCP   4m40s
-
-curl 10.0.1.20:9001
+# NAME            TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE
+# clusterip-svc   ClusterIP   10.152.183.242   <none>        9001/TCP,9002/TCP   2m32s
+# nodeport-svc    NodePort    10.152.183.146   <none>        80:31175/TCP        155m
 
 kubectl apply -f pod.yaml -n task01 
 # pod/mypod created
 
 kubectl exec -it mypod -n task01 -- bash
-mypod:/# curl nodeport-svc:9001
+mypod:/# curl clusterip-svc:9001
 # <!DOCTYPE html>
 # <html>
 # <head>
@@ -205,6 +226,10 @@ ubuntu@microk8s:~$ curl 10.0.1.20:31175
 # </body>
 # </html>
 ```
+
+Файлы [тут](./task01/), изображение вот
+
+![screenshot](./images/task01.png)
 
 ---
 ## **Задание 2: Настройка Ingress**
