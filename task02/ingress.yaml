@@ -1,0 +1,29 @@
+# apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: task02-ingress
+  annotations:  # ВАЖНО: Эта аннотация нужна для rewrite правил
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  namespace: task02
+spec:
+  ingressClassName: public
+  rules:
+  - http:
+      paths:
+      # Открывает frontend по пути /
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-service
+            port:
+              number: 80
+      # Открывает backend по пути /api
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: multitool-service
+            port:
+              number: 8080

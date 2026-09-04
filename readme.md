@@ -264,6 +264,64 @@ ubuntu@microk8s:~$ curl 10.0.1.20:31175
   - `ingress.yaml`
 - Скриншоты проверки доступа (`curl` или браузер).
 
+### Решение
+
+```bash
+microk8s enable ingress
+
+kubectl create namespace task02
+# namespace/task02 created
+
+kubectl apply -f deployment-backend.yaml
+kubectl apply -f deployment-frontend.yaml
+kubectl apply -f service-frontend.yaml
+kubectl apply -f service-frontend.yaml
+kubectl apply -f ingress-frontend.yaml
+
+
+kubectl get ingress -n task02
+NAME             CLASS    HOSTS   ADDRESS   PORTS   AGE
+task02-ingress   public   *                 80      11m
+
+
+curl http://127.0.0.1/
+# <!DOCTYPE html>
+# <html>
+# <head>
+# <title>Welcome to nginx!</title>
+# <style>
+# html { color-scheme: light dark; }
+# body { width: 35em; margin: 0 auto;
+# font-family: Tahoma, Verdana, Arial, sans-serif; }
+# </style>
+# </head>
+# <body>
+# <h1>Welcome to nginx!</h1>
+# <p>If you see this page, nginx is successfully installed and working.
+# Further configuration is required for the web server, reverse proxy, 
+# API gateway, load balancer, content cache, or other features.</p>
+
+# <p>For online documentation and support please refer to
+# <a href="https://nginx.org/">nginx.org</a>.<br/>
+# To engage with the community please visit
+# <a href="https://community.nginx.org/">community.nginx.org</a>.<br/>
+# For enterprise grade support, professional services, additional 
+# security features and capabilities please refer to
+# <a href="https://f5.com/nginx">f5.com/nginx</a>.</p>
+
+# <p><em>Thank you for using nginx.</em></p>
+# </body>
+# </html>
+curl http://127.0.0.1/api
+# <html>
+# <head><title>404 Not Found</title></head>
+# <body>
+# <center><h1>404 Not Found</h1></center>
+# <hr><center>nginx/1.28.0</center>
+# </body>
+# </html>
+```
+
 ---
 ## Шаблоны манифестов с учебными комментариями
 ### **1. Deployment (nginx + multitool)**
