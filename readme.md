@@ -266,6 +266,10 @@ ubuntu@microk8s:~$ curl 10.0.1.20:31175
 
 ### Решение
 
+Файлы [тут](./task02/)
+
+![скрин](./images/task02.png)
+
 ```bash
 microk8s enable ingress
 
